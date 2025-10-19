@@ -1,0 +1,25 @@
+{
+  "name": "@macros/ui",
+  "version": "1.0.0",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs"
+  },
+  "dependencies": {
+    "@macros/core": "workspace:*",
+    "@macros/types": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0 <20.0.0",
+    "react-dom": ">=18.0.0 <20.0.0"
+  }
+}
