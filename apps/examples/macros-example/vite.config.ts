@@ -10,4 +10,7 @@ export default defineConfig({
       macros: path.resolve(__dirname, "../../../packages/macros/dist"),
     },
   },
+  optimizeDeps: {
+    exclude: ["macros"], // so Vite doesn’t try prebundle it
+  },
 })

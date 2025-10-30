@@ -10,7 +10,9 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "dev:all": "turbo run dev --filter='@macros/*'",
+    "dev:example": "pnpm -C apps/examples/macros-example dev"
   },
   "dependencies": {
     "@vitejs/plugin-react-swc": "^4.1.0",

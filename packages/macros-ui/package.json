@@ -12,8 +12,8 @@
     "package.json"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --dts --format esm,cjs",
-    "dev": "tsup src/index.ts --watch --dts --format esm,cjs"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@macros/core": "workspace:*",
