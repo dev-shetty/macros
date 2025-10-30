@@ -4,6 +4,8 @@ import {
   Macro,
   MacroResultValue,
   MacroStatus,
+  MacroSubstitution,
+  MacroSubstitutionMap,
   MacroToValueMap,
   MacroValue,
 } from "@macros/types"
@@ -13,12 +15,10 @@ import {
  * Mainly used for settings preview
  */
 
-type ParserMap = Record<string, any>
-
-type EvaluateOfferCaptionProps = {
+interface IEvaluateOfferCaptionProps {
   raw: string
-  parserMap: ParserMap
-  isExample?: boolean
+  macroSubstituionMap: MacroSubstitutionMap
+  macroPrefix?: string
 }
 
 /*
@@ -28,12 +28,11 @@ type EvaluateOfferCaptionProps = {
  */
 export const parseMacros = ({
   raw,
-  parserMap,
-  isExample = true,
-}: EvaluateOfferCaptionProps): MacroResultValue => {
-  const macroKeyToValueMap = createMacroToValueMap(parserMap, isExample)
-
-  return evaluateMacro(raw, macroKeyToValueMap)
+  macroSubstituionMap,
+  macroPrefix = DEFAULT_MACRO_PREFIX,
+}: IEvaluateOfferCaptionProps): MacroResultValue => {
+  const macroKeyToValueMap = createMacroToValueMap(macroSubstituionMap)
+  return evaluateMacro(raw, macroKeyToValueMap, macroPrefix)
 }
 
 /**
@@ -64,7 +63,7 @@ export const parseMacros = ({
 const evaluateMacro = (
   rawString: string | undefined,
   macroKeyValueMap: MacroToValueMap,
-  macroPrefix: string = DEFAULT_MACRO_PREFIX
+  macroPrefix: string
 ): MacroResultValue => {
   if (!rawString) {
     return {
@@ -83,9 +82,16 @@ const evaluateMacro = (
       macroKeyValueMap.has(macroKey) &&
       macroKeyValueMap.get(macroKey) !== undefined
     ) {
-      const macroValue = macroKeyValueMap.get(macroKey) as string
-      captionMacrosMap.set(macroKey, macroValue)
-      return macroValue
+      const macro = macroKeyValueMap.get(macroKey)
+      const macroValue = macro?.value as string
+
+      if (!macro?.formatter) {
+        captionMacrosMap.set(macroKey, macroValue)
+        return macroValue
+      }
+
+      captionMacrosMap.set(macroKey, macro?.formatter(macroValue))
+      return macro?.formatter(macroValue)
     }
     // If macroKey is not found, return the original match
     return match
@@ -118,30 +124,15 @@ const evaluateMacro = (
  * Creates a mapping of macro keys to their corresponding values from the offer
  */
 const createMacroToValueMap = (
-  parserMap: ParserMap,
-  isExample?: boolean
+  parserMap: MacroSubstitutionMap
 ): MacroToValueMap => {
-  const availableMacros = new Map<string, Macro>()
-  parserMap.forEach((macro: Macro) => {
-    availableMacros.set(macro.key, macro)
+  const macroKeyToValueMap = new Map<string, MacroSubstitution>()
+
+  Object.entries(parserMap).map(([_, macro]) => {
+    macroKeyToValueMap.set(macro.key, macro)
   })
 
-  const macroToValueMap: MacroToValueMap = new Map()
-
-  if (isExample) {
-    availableMacros.forEach((macro, key) => {
-      macroToValueMap.set(key, macro.example ?? "")
-    })
-    return macroToValueMap
-  }
-
-  if (!parserMap) return macroToValueMap
-
-  availableMacros.forEach((macro) => {
-    macroToValueMap.set(macro.key, getMacroValue(macro, parserMap).value)
-  })
-
-  return macroToValueMap
+  return macroKeyToValueMap
 }
 
 // const getOfferCurrency = (
@@ -202,7 +193,7 @@ type GetMacroValueReturnType = {
 
 const getMacroValue = (
   macro: Macro,
-  parserMap: ParserMap
+  parserMap: MacroSubstitutionMap
 ): GetMacroValueReturnType => {
   // Find value in system fields
   if (macro.key in parserMap) {

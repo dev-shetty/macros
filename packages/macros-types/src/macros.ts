@@ -14,7 +14,15 @@ export interface Macro {
   currency?: string | string[]
 }
 export type MacroValue = string | number
-export type MacroToValueMap = Map<string, MacroValue>
+
+export type MacroSubstitution = {
+  key: string
+  value: MacroValue
+  formatter?: (value: MacroValue, locale?: string) => string
+}
+export type MacroSubstitutionMap = MacroSubstitution[]
+
+export type MacroToValueMap = Map<string, MacroSubstitution>
 
 export type MacroResultValue =
   | {
