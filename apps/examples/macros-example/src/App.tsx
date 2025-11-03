@@ -35,6 +35,14 @@ function App() {
     macroSubstituionMap: macroSub,
   })
 
+  const parsedMacrosExample = parseMacros({
+    raw: caption,
+    macroSubstituionMap: MACROS.map((macro) => ({
+      key: macro.key,
+      value: macro.example,
+    })),
+  })
+
   return (
     <div>
       <h1>Macros Example</h1>
@@ -45,6 +53,9 @@ function App() {
       />
       <h2>Evaluated Macro</h2>
       <p>{parsedMacro.value}</p>
+
+      <h2>Evaluated Macro Example</h2>
+      <p>{parsedMacrosExample.value}</p>
     </div>
   )
 }
