@@ -19,5 +19,28 @@
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs",
     "dev": "tsup src/index.ts --watch --dts --format esm,cjs"
-  }
+  },
+  "description": "Lightweight text macros: provides a React `MacroInput` for inline `@macros`, a core parser to resolve macros into values (with optional formatters). Use it to let users type things like `@name` and render finalized strings from real data.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dev-shetty/macros.git"
+  },
+  "keywords": [
+    "macros",
+    "text-macros",
+    "formatter",
+    "mentions",
+    "react-component",
+    "input",
+    "autocomplete",
+    "string-interpolation",
+    "template",
+    "template-strings"
+  ],
+  "author": "Deveesh Shetty",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dev-shetty/macros/issues"
+  },
+  "homepage": "https://github.com/dev-shetty/macros#readme"
 }
